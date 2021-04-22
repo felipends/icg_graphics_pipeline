@@ -65,7 +65,6 @@ let y_cam = new THREE.Vector3();
 
 direction_vector.subVectors(cam_look_at, cam_pos);
 z_cam = direction_vector.normalize().clone().negate();
-console.log(z_cam)
 x_cam.crossVectors(cam_up, z_cam).normalize();
 y_cam.crossVectors(z_cam, x_cam).normalize();
 
