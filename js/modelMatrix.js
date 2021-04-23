@@ -20,7 +20,7 @@ class ModelMatrix extends THREE.Matrix4 {
           applyTransformations(['scale', 'rotation'], [{s_x: 2, s_y: 2, s_z: 1}, {axis: 'x', theta: 45}])
         Aplica as transformações à matriz de modelagem.
                          array de string,      array de objetos */
-    applyTransformations(transformations = [], args = []) {
+    apply_transformations(transformations = [], args = []) {
         const result_matrix = new THREE.Matrix4();
         result_matrix.set(1.0, 0.0, 0.0, 0.0,
             0.0, 1.0, 0.0, 0.0,

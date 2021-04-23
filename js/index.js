@@ -39,7 +39,7 @@ let edges = [[0, 1],
  *****************************************************************************/
 let m_model = new ModelMatrix();
 
-//m_model.applyTransformations(['scale', 'translation'], [{ s_x: 5, s_y: 5, s_z: 5 }, { t_x: 10, t_y: 10, t_z: 0 }]);
+//m_model.apply_transformations(['scale', 'translation'], [{ s_x: 5, s_y: 5, s_z: 5 }, { t_x: 10, t_y: 10, t_z: 0 }]);
 
 for (let i = 0; i < 8; ++i)
     vertices[i].applyMatrix4(m_model);
@@ -82,7 +82,7 @@ m_bt.set(x_cam.x, x_cam.y, x_cam.z, 0.0,
 
 let m_t = new ModelMatrix();
 
-m_t.applyTransformations(['translation'], [{ t_x: -cam_pos.x, t_y: -cam_pos.y, t_z: -cam_pos.z }]);
+m_t.apply_transformations(['translation'], [{ t_x: -cam_pos.x, t_y: -cam_pos.y, t_z: -cam_pos.z }]);
 // Constrói a matriz de visualização 'm_view' como o produto
 //  de 'm_bt' e 'm_t'.
 let m_view = m_bt.clone().multiply(m_t);
@@ -131,7 +131,7 @@ const viewport_translation = {
     t_z: 0
 };
 
-m_viewport.applyTransformations(viewport_transformations, [viewport_scale, viewport_translation]);
+m_viewport.apply_transformations(viewport_transformations, [viewport_scale, viewport_translation]);
 
 for (let i = 0; i < 8; ++i)
     vertices[i].applyMatrix4(m_viewport);
