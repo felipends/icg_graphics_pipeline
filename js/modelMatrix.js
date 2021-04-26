@@ -70,8 +70,8 @@ class ModelMatrix extends THREE.Matrix4 {
 
         // graus para radianos
         theta *= Math.PI / 180.0;
-        theta_cosine = Math.cos(theta);
-        theta_sine = Math.sin(theta);
+        const theta_cosine = Math.cos(theta);
+        const theta_sine = Math.sin(theta);
 
         if (axis === 'x') {
             const m_x_rotation = new THREE.Matrix4();

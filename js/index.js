@@ -8,30 +8,47 @@ color_buffer.clear();
  * tem comprimento igual a 2.
  *****************************************************************************/
 //                                   X     Y     Z    W (coord. homogênea)
+// let vertices = [new THREE.Vector4(-1.0, -1.0, -1.0, 1.0),
+// new THREE.Vector4(1.0, -1.0, -1.0, 1.0),
+// new THREE.Vector4(1.0, -1.0, 1.0, 1.0),
+// new THREE.Vector4(-1.0, -1.0, 1.0, 1.0),
+// new THREE.Vector4(-1.0, 1.0, -1.0, 1.0),
+// new THREE.Vector4(1.0, 1.0, -1.0, 1.0),
+// new THREE.Vector4(1.0, 1.0, 1.0, 1.0),
+// new THREE.Vector4(-1.0, 1.0, 1.0, 1.0)];
 let vertices = [new THREE.Vector4(-1.0, -1.0, -1.0, 1.0),
-new THREE.Vector4(1.0, -1.0, -1.0, 1.0),
-new THREE.Vector4(1.0, -1.0, 1.0, 1.0),
-new THREE.Vector4(-1.0, -1.0, 1.0, 1.0),
-new THREE.Vector4(-1.0, 1.0, -1.0, 1.0),
-new THREE.Vector4(1.0, 1.0, -1.0, 1.0),
-new THREE.Vector4(1.0, 1.0, 1.0, 1.0),
-new THREE.Vector4(-1.0, 1.0, 1.0, 1.0)];
+    new THREE.Vector4(1.0, -1.0, -1.0, 1.0),
+    new THREE.Vector4(1.0, 1.0, -1.0, 1.0),
+    new THREE.Vector4(-1.0, 1.0, -1.0, 1.0),
+    new THREE.Vector4(0.0, 0.0, 1.0, 1.0),
+    new THREE.Vector4(0.0, 0.0, 1.0, 1.0),
+    new THREE.Vector4(0.0, 0.0, 1.0, 1.0),
+    new THREE.Vector4(0.0, 0.0, 1.0, 1.0),];
 
 /******************************************************************************
  * As 12 arestas do cubo, indicadas através dos índices dos seus vértices.
  *****************************************************************************/
-let edges = [[0, 1],
-[1, 2],
-[2, 3],
-[3, 0],
-[4, 5],
-[5, 6],
-[6, 7],
-[7, 4],
-[0, 4],
-[1, 5],
-[2, 6],
-[3, 7]];
+// let edges = [[0, 1],
+// [1, 2],
+// [2, 3],
+// [3, 0],
+// [4, 5],
+// [5, 6],
+// [6, 7],
+// [7, 4],
+// [0, 4],
+// [1, 5],
+// [2, 6],
+// [3, 7]];
+
+let edges = [[0,1],
+			 [1,2],
+			 [2,3],
+			 [3,0],
+			 [0,4],
+			 [1,5],
+			 [2,6],
+			 [3,7]];
 
 /******************************************************************************
  * Matriz Model (modelagem): Esp. Objeto --> Esp. Universo. 
@@ -39,7 +56,7 @@ let edges = [[0, 1],
  *****************************************************************************/
 let m_model = new ModelMatrix();
 
-//m_model.apply_transformations(['scale', 'translation'], [{ s_x: 5, s_y: 5, s_z: 5 }, { t_x: 10, t_y: 10, t_z: 0 }]);
+m_model.apply_transformations(['rotation', 'rotation'], [{ axis: 'x', theta: 240 }, { axis: 'y', theta: -20 }]);
 
 for (let i = 0; i < 8; ++i)
     vertices[i].applyMatrix4(m_model);
