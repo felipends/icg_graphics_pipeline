@@ -70,28 +70,36 @@ class ModelMatrix extends THREE.Matrix4 {
 
         // graus para radianos
         theta *= Math.PI / 180.0;
+        theta_cosine = Math.cos(theta);
+        theta_sine = Math.sin(theta);
 
-        const m_x_rotation = new THREE.Matrix4();
-        m_x_rotation.set(1.0, 0.0, 0.0, 0.0,
-            0.0, Math.cos(theta), -Math.sin(theta), 0.0,
-            0.0, Math.sin(theta), Math.cos(theta), 0.0,
-            0.0, 0.0, 0.0, 1.0);
+        if (axis === 'x') {
+            const m_x_rotation = new THREE.Matrix4();
+            m_x_rotation.set(1.0, 0.0, 0.0, 0.0,
+                0.0, theta_cosine, -theta_sine, 0.0,
+                0.0, theta_sine, theta_cosine, 0.0,
+                0.0, 0.0, 0.0, 1.0);
 
-        const m_y_rotation = new THREE.Matrix4();
-        m_y_rotation.set(Math.cos(theta), 0.0, Math.sin(theta), 0.0,
-            0.0, 1.0, 0.0, 0.0,
-            -Math.sin(theta), 0.0, Math.cos(theta), 0.0,
-            0.0, 0.0, 0.0, 1.0);
+            return m_x_rotation;
+        }
+        else if (axis === 'y') {
+            const m_y_rotation = new THREE.Matrix4();
+            m_y_rotation.set(theta_cosine, 0.0, theta_sine, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                -theta_sine, 0.0, theta_cosine, 0.0,
+                0.0, 0.0, 0.0, 1.0);
 
-        const m_z_rotation = new THREE.Matrix4();
-        m_z_rotation.set(Math.cos(theta), -Math.sin(theta), 0.0, 0.0,
-            Math.sin(theta), Math.cos(theta), 0.0, 0.0,
-            0.0, 0.0, 1.0, 0.0,
-            0.0, 0.0, 0.0, 1.0);
+            return m_y_rotation;
+        }
+        else {
+            const m_z_rotation = new THREE.Matrix4();
+            m_z_rotation.set(theta_cosine, -theta_sine, 0.0, 0.0,
+                theta_sine, theta_cosine, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.0, 0.0, 0.0, 1.0);
 
-        const m_rotation = { 'x': m_x_rotation, 'y': m_y_rotation, 'z': m_z_rotation };
-
-        return m_rotation[axis];
+            return m_z_rotation;
+        }
     }
 
     translation_matrix(args) {
