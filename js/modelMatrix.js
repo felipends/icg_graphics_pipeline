@@ -11,7 +11,8 @@ class ModelMatrix extends THREE.Matrix4 {
         'scale': this.scale_matrix,
         'rotation': this.rotation_matrix,
         'shear': this.shear_matrix,
-        'translation': this.translation_matrix
+        'translation': this.translation_matrix,
+        'reflection': this.reflection_matrix
     };
 
     /*  Função que recebe as transformações contidas na matriz de modelagem
@@ -115,6 +116,23 @@ class ModelMatrix extends THREE.Matrix4 {
             0.0, 0.0, 0.0, 1.0);
 
         return m_translation;
+    }
+
+    reflection_matrix(args) {
+        const plane = args.plane;
+        const plane_inversion = {
+            'xy': { x: 1.0, y: 1.0, z: -1.0 },
+            'yz': { x: -1.0, y: 1.0, z: 1.0 },
+            'xz': { x: 1.0, y: -1.0, z: 1.0 }
+        };
+        let m_reflection = new THREE.Matrix4();
+
+        m_reflection.set(plane_inversion[plane].x, 0.0, 0.0, 0.0,
+            0.0, plane_inversion[plane].y, 0.0, 0.0,
+            0.0, 0.0, plane_inversion[plane].z, 0.0,
+            0.0, 0.0, 0.0, 1.0);
+
+        return m_reflection;
     }
 
 }

@@ -17,6 +17,15 @@ new THREE.Vector4(1.0, 1.0, -1.0, 1.0),
 new THREE.Vector4(1.0, 1.0, 1.0, 1.0),
 new THREE.Vector4(-1.0, 1.0, 1.0, 1.0)];
 
+// vértices da pirâmide
+// let vertices = [new THREE.Vector4(-1.0, -1.0, -1.0, 1.0),
+// new THREE.Vector4(1.0, -1.0, -1.0, 1.0),
+// new THREE.Vector4(1.0, 1.0, -1.0, 1.0),
+// new THREE.Vector4(-1.0, 1.0, -1.0, 1.0),
+// new THREE.Vector4(0.0, 0.0, 1.0, 1.0),
+// new THREE.Vector4(0.0, 0.0, 1.0, 1.0),
+// new THREE.Vector4(0.0, 0.0, 1.0, 1.0),
+// new THREE.Vector4(0.0, 0.0, 1.0, 1.0),];
 /******************************************************************************
  * As 12 arestas do cubo, indicadas através dos índices dos seus vértices.
  *****************************************************************************/
@@ -33,6 +42,15 @@ let edges = [[0, 1],
 [2, 6],
 [3, 7]];
 
+// arestas da pirâmide
+// let edges = [[0, 1],
+// [1, 2],
+// [2, 3],
+// [3, 0],
+// [0, 4],
+// [1, 5],
+// [2, 6],
+// [3, 7]];
 
 /******************************************************************************
  * Matriz Model (modelagem): Esp. Objeto --> Esp. Universo. 
@@ -40,7 +58,18 @@ let edges = [[0, 1],
  *****************************************************************************/
 let m_model = new ModelMatrix();
 
-//m_model.apply_transformations(['rotation', 'rotation'], [{ axis: 'x', theta: 240 }, { axis: 'y', theta: -20 }]);
+// transformações para testes
+// m_model.apply_transformations(['rotation',
+//     'rotation',
+//     'scale',
+//     'translation',
+//     'reflection'],
+//     [{ axis: 'x', theta: 240 },
+//     { axis: 'y', theta: -20 },
+//     { s_x: 1, s_y: 1, s_z: 1 },
+//     { t_x: 0, t_y: 0, t_z: 0.3 },
+//     { plane: 'yz'}
+//     ]);
 
 for (let i = 0; i < 8; ++i)
     vertices[i].applyMatrix4(m_model);
@@ -122,8 +151,8 @@ for (let i = 0; i < 8; ++i)
 let m_viewport = new ModelMatrix();
 const viewport_transformations = ['scale', 'translation'];
 const viewport_scale = {
-    s_x: 128/2,
-    s_y: 128/2,
+    s_x: 128 / 2,
+    s_y: 128 / 2,
     s_z: 1
 };
 const viewport_translation = {
