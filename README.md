@@ -162,6 +162,31 @@ translation_matrix(args) {
 
 O método acima tem como parâmetro um objeto contendo os atributos numéricos ```t_x, t_y, t_z```, representando o quanto o objeto deve se deslocar em cada eixo do espaço em que este se encontra (ex: ```{t_x: 2, t_y: 2, t_z: 2}```).
 
+#### Matriz de reflexão
+
+Esta matriz é responsável por realizar transformações geométricas de forma que o objeto seja refletido em um determinado plano. A implementação do método que representa esta transformação é mostrada a sguir.
+
+```js
+reflection_matrix(args) {
+    const plane = args.plane;
+    const plane_inversion = {
+        'xy': { x: 1.0, y: 1.0, z: -1.0 },
+        'yz': { x: -1.0, y: 1.0, z: 1.0 },
+        'xz': { x: 1.0, y: -1.0, z: 1.0 }
+    };
+    let m_reflection = new THREE.Matrix4();
+
+    m_reflection.set(plane_inversion[plane].x, 0.0, 0.0, 0.0,
+        0.0, plane_inversion[plane].y, 0.0, 0.0,
+        0.0, 0.0, plane_inversion[plane].z, 0.0,
+        0.0, 0.0, 0.0, 1.0);
+
+    return m_reflection;
+}
+```
+
+O método acima tem como parâmetro um objeto contendo o atributo literal ```plane```, representando em qual plano a reflexão deve acontecer (ex: ```{plane: 'xz'}``` para realizar a reflexão no plano formado pelos eixo x e z, outras opções são 'xy' e 'yz').
+
 ## Matriz View
 A matriz View será responsável pelas transformações do espaço do universo para o espaço da câmera. Para isso é preciso definir três informações importantes a respeito da camera sintética que são: Posição da câmera no espaço do universo, Direção que é ponto para o qual a câmera aponta, e o vetor Up da câmera.
 
