@@ -169,7 +169,7 @@ for (let i = 0; i < 8; ++i)
 /******************************************************************************
  * Rasterização
  *****************************************************************************/
-color = [255, 0, 0, 0];
+color = [255, 0, 0, 0]; // vermelho
 for (let i = 0; i < edges.length; ++i) {
     MidPointLineAlgorithm(vertices[edges[i][0]].x, vertices[edges[i][0]].y, vertices[edges[i][1]].x, vertices[edges[i][1]].y, color, color);
 }

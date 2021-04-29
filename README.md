@@ -12,13 +12,13 @@ Para resolução da atividade que consistia em implementar os estágios geométr
 na forma de matrizes e considerando o espaço homogêneo (i.e. matrizes 4×4). Foram implementadas as técnicas sugeridas pelo professor e encontradas no livro **Fundamentals of computer graphics 4th Ed** para a realização desta tarefa. 
 
 ## Matriz de modelagem
-Contém todas as transformações necessárias para levarem a geometria do espaço do objeto para o espaço do universo. Para transportar vetores do espaço do objeto para o espaço do universo, precisa utilizar transformações geométricas como: Rotação, Translação, Cisalhamento ou Shear e Scale sobre cada vetor a uma **Matriz Model = I(identidade)**.
+Contém todas as transformações necessárias para levarem a geometria do espaço do objeto para o espaço do universo. Para transportar vetores do espaço do objeto para o espaço do universo, precisa utilizar transformações geométricas como: Rotação, Translação, Cisalhamento, reflexão, Shear e Scale sobre cada vetor a uma **Matriz Model = I(identidade)**.
 
 <img src="https://i.imgur.com/Qnd294s.png" alt="pipeline"/>
 
 Para representar a matriz de modelagem, foi implementada uma classe ```ModelMatrix``` herdando da classe ```Matrix4``` da biblioteca Trhee.js. Esta classe herda todos os atributos de sua classe pai acrescentando a estes um dicionário contendo as transformações possíveis de se realizar. Os métodos implementados nesta classe são as transformações que o um objeto pode sofer ao logo da transição de espaços e o principal deles, onde as transformações são combinadas e aplicadas à matriz. O diagrama para esta classe é apresentado na figura a seguir.
 
-<img src="https://imgur.com/ZLSRsgp.png" alt="pipeline"/>
+<img src="https://imgur.com/ifW24f8.png" alt="pipeline"/>
 
 A implementação da classe vai ser discutida a seguir.
 
@@ -31,7 +31,8 @@ transformations = {
     'scale': this.scale_matrix,
     'rotation': this.rotation_matrix,
     'shear': this.shear_matrix,
-    'translation': this.translation_matrix
+    'translation': this.translation_matrix,
+    'reflection': this.reflection_matrix
 };
 ```
 
@@ -188,27 +189,25 @@ reflection_matrix(args) {
 O método acima tem como parâmetro um objeto contendo o atributo literal ```plane```, representando em qual plano a reflexão deve acontecer (ex: ```{plane: 'xz'}``` para realizar a reflexão no plano formado pelos eixo x e z, outras opções são 'xy' e 'yz').
 
 ## Matriz View
-A matriz View será responsável pelas transformações do espaço do universo para o espaço da câmera. Para isso é preciso definir três informações importantes a respeito da camera sintética que são: Posição da câmera no espaço do universo, Direção que é ponto para o qual a câmera aponta, e o vetor Up da câmera.
+A matriz View é responsável pelas transformações da transição do objeto do espaço do universo para o espaço da câmera. Para isso é preciso definir três informações importantes a respeito da câmera sintética que são: a posição da câmera no espaço do universo, direção que é ponto para o qual a câmera aponta, e o vetor *up* da câmera.
 
-Sabendo que inicialmente a matriz contém a matriz identidade, o primeiro passo é derivar os vetores da base da câmera a partir dos parâmetros citados.
+<img src="https://imgur.com/H7frrGc.png" alt="pipeline"/>
+
+Sabendo que inicialmente a matriz contém a identidade, o primeiro passo é derivar os vetores da base da câmera a partir dos parâmetros citados.
+
+### Derivando vetores da base da câmera 
 
 Como sabemos que para passar do espaço do universo para o espaço da câmera é uma mudança de base com origem diferente, assumimos que $\overrightarrow{D} = \overrightarrow{a'} = \overrightarrow{a} - \overrightarrow{t}$, onde $\overrightarrow{t}$ é a posição da câmera no espaço do universo e $\overrightarrow{a}$ o ponto no espaço do universo para onde a câmera está apontando.
 
-Dessa forma, a base ortonormal da câmera pode ser calculada pelos vetores, Xcam, Ycam e Zcam. Onde:
+Dessa forma, a base ortonormal da câmera pode ser definida pelos vetores, Xcam, Ycam e Zcam. Onde:
 
 $Xcam = \frac{U \times Zcam}{|U \times Zcam|}$
 $Ycam = \frac{Zcam \times Xcam}{|Zcam \times Xcam|}$
 $Zcam = \frac{-D}{|D|}$
 
-Como se trata de uma base ortonormal estes vetores precisam ser normalizados.
+Como se trata de uma base ortonormal estes vetores precisam ser normalizados. 
 
-O segundo passo é construir a inversa da matriz de base da câmera $Mbase = B^{T} \times T$, onde $B^{T}$ é a matriz transposta e T é a matriz de translação.
-
-E por fim, construir a matriz de visualização que vai ser: $Mview = B^{T}} \times T$.
-
-<img src="https://imgur.com/H7frrGc.png" alt="pipeline"/>
-
-Na implementação do pipeline, para derivar os vetores da base da câmera foram realizados comandos utilizando métodos de opeções geométricas da biblioteca Three.js. Os cálculos realizados são mostrados a seguir.
+Na implementação do pipeline, para derivar os vetores da base da câmera foram realizados comandos utilizando métodos de operações geométricas da biblioteca Three.js. Os cálculos realizados são mostrados a seguir.
 
 ```js
 let cam_pos = new THREE.Vector3(1.3, 1.7, 2.0);     // posição da câmera no esp. do Universo.
@@ -226,7 +225,15 @@ x_cam.crossVectors(cam_up, z_cam).normalize();
 y_cam.crossVectors(z_cam, x_cam).normalize();
 ```
 
-Em seguida é obtida a inversa da matriz da base da câmera, em seguida é aplicada uma translação a ela, através da sequência de comandos a seguir.
+O segundo passo é construir a inversa da matriz de base da câmera, explicado a seguir.
+
+### Construindo a matriz da base da câmera
+
+Por se tratar de uma matriz ortogonal, sua inversa é igual à sua transposta: $Mbase = B^{T} \times T$, onde $B^{T}$ é a matriz transposta e T é a matriz de translação.
+
+E por fim, construir a matriz de visualização que vai ser: $Mview = B^{T} \times T$.
+
+Ao obter os vetores da base da câmera, é possível, com eles, obter a inversa da matriz de base da câmera ```m_bt```. Em seguida é aplicada uma translação a esta matriz, formando assim a mztriz de visualização ```m_view```. Este processo é realizado como mostrado a seguir, utilizando métodos já mencionados.
 
 ```js
 let m_bt = new ModelMatrix();
@@ -244,14 +251,79 @@ let m_view = m_bt.clone().multiply(m_t);
 ```
 
 ## Matriz de projeção
-É responsável por levar objetos do espaço da câmera para o espaço de recorte. Para isso devemos levar em conta o parâmetro **d**, que é a distância do centro de captura para o eixo y, ao longo do eixo z. E a matriz de Projeção corrigida que é: $Mp_{corrigida}= Mp \times Mt$, onde Mt é a matriz de translação no eixo z, dessa forma aproximamos a cena do centro de projeção ao longo do eixo z. E Mp é a matriz de projeção que leva um ponto do espaço da câmera para o espaço de recorte.
+
+A matriz View é responsável por transformar vértices do espaço da câmera para o espaço de recorte. Considerando um ponto **p** no espaço da câmera que representa um vértice genérico de um objeto. Temos que, esse ponto projetado sobre o plano de visualização, inicialmente, coincide com o eixo Y gerando um **p'** que contém um y' como coordenada. E um ponto **c** é o ponto onde está localizado o centro de captura que está a **d** unidades do plano de visualização.
+
+Utilizando semelhança de triângulos é possivel obter uma relação para y' e para x'. Como queremos representar uma cena 3D em uma tela 2D sem perder profundidade e com calculos padronizados aos de x' e y', usa-se $z'=\frac{z}{1-\frac{z}{d}}$.
+Antes do ponto P se transformar para P', no espaço de recorte ele é P'p $(x,y,z,\frac{1-z}{d})$. Nesta etapa do pipeline gráfico o valor da coordenada homogênea w é diferente de 1. A matriz de projeção leva um ponto P (x,y,z,w,1) do espaço da câmera para um ponto P'p (x,y,z,1-z/d) no espaço de recorte.
+
+Levando em consideração que o parâmetro **d**, que é a distância do centro de captura para o eixo y, ao longo do eixo z. E a matriz de Projeção corrigida que é: $Mp_{corrigida}= Mp \times Mt$, onde Mt é a matriz de translação no eixo z, dessa forma aproximamos a cena do centro de projeção ao longo do eixo z. E Mp é a matriz de projeção que leva um ponto do espaço da câmera para o espaço de recorte.
 
 Logo $Mp_{corrigida}$ pega os vertices no espaço da câmera e aplica a distorção perspectiva com distâncias corretas.
 
 <img src="https://i.imgur.com/fyi4sET.png" alt="pipeline"/>
 
+## Homogenização
+
+Até este passo do pipeline foram utilizadas coordenadas do espaço homogêneo $(x, y, z ,w)$, sendo $w$ chamada de coordenada homogênea. Precisamos, neste ponto, trazer estas informações para o espaço euclidiano, para que a cena possa ser exibida. Esta conversão é feita dividindo as demais coordenadas pela coordenada homogênea. Este processo é realizado utilizando o método ```divideScalar``` presente na classe ```Vector4``` da biblioteca Three.js, como mostrado a seguir.
+
+```js
+for (let i = 0; i < 8; ++i)
+    vertices[i].divideScalar(vertices[i].w);
+```
 ## Matriz Viewport
 
-É responsável por levar do espaço canônico para o espaço da tela.
+Este é o último estágio em que são aplicadas transformações no objeto a ser exibido, são aplicadas transformações que o levam do espaço canônico para o espaço da tela.
 
 <img src="https://imgur.com/a6vEeq4.png" alt="pipeline"/>
+
+As matrizes que combinadas formam a matriz viewport são:
+
+- Uma matriz de escala com parâmetros x = width/2, y = height/2 e z = 1, sendo width e height as dimensões da tela (largura e altura).
+- Uma matriz de translação com x = 1, y = 1 e z = 0.
+
+Esta etapa de combinação das matrizes citadas foi implementada da forma exibida a seguir.
+
+```js
+let m_viewport = new ModelMatrix();
+const viewport_transformations = ['scale', 'translation'];
+const viewport_scale = {
+    s_x: 128 / 2,
+    s_y: 128 / 2,
+    s_z: 1
+};
+const viewport_translation = {
+    t_x: 1,
+    t_y: 1,
+    t_z: 0
+};
+
+m_viewport.apply_transformations(viewport_transformations, [viewport_scale, viewport_translation]);
+```
+
+Esta última modelagem é feita no objeto e este é exibido na tela.
+
+Para a exibição foi utilizado o algoritmo de rasterização do ponto médio, como segue.
+
+```js
+color = [255, 0, 0, 0]; // vermelho
+for (let i = 0; i < edges.length; ++i) {
+    MidPointLineAlgorithm(vertices[edges[i][0]].x, vertices[edges[i][0]].y, vertices[edges[i][1]].x, vertices[edges[i][1]].y, color, color);
+}
+```
+
+## Conclusões
+
+Foram desenvolvidos neste trabalho todos os estágios de um pipeline gráfico para a renderização de um frame de uma cena, para isso foram implementadas transformações geométricas envolvendo matrizes e vetores, e, por fim, chegando a exibição do objeto na tela. O código fonte deste projeto encontra-se em [https://github.com/felipends/icg_graphics_pipeline](https://github.com/felipends/icg_graphics_pipeline).
+
+O resultado da aplicação de todos os passos citados anteriormente para a renderização de um cubo é mostrado a seguir.
+
+<img src="https://imgur.com/fAD3wA9.png" alt="cube"/>
+
+Este exemplo pode ser encontrado em execução neste endereço: [https://codepen.io/felipends/pen/NWdVEKz](https://codepen.io/felipends/pen/NWdVEKz).
+
+
+## Referências
+
+* Notas de aula e videoaulas do professor da disciplina
+* Livro do Peter Shirley, Fundamentals of computer graphics 4th Ed
