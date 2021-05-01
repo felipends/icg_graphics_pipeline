@@ -323,6 +323,12 @@ O resultado da aplicação de todos os passos citados anteriormente para a rende
 Este exemplo pode ser encontrado em execução neste endereço: [https://codepen.io/felipends/pen/NWdVEKz](https://codepen.io/felipends/pen/NWdVEKz).
 
 
+## Dificuldades e possíveis melhorias
+
+As principais dificuldades foram encontradas no início da implementação, uma vez que não haviam artifícios visuais para verificar se os passos haviam sido implementadas de forma correta. Desse modo, a forma de depuração encontrada foi: verificar matematicamente se as matrizes estavam recebendo as transformações de forma devida, de acordo com as operações geométricas aplicadas.
+
+Uma possível melhora é possibilitar a movimentação do objeto na cena. Através de algum tipo de interação com o usuário ou automaticamente.
+
 ## Referências
 
 * Notas de aula e videoaulas do professor da disciplina
